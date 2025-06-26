@@ -77,11 +77,15 @@
                                                 @endif
                                             </td>
                                             <td>
-                                                @if ($d->lock == 1)
-                                                    <i class="ti ti-checks text-success"></i>
-                                                @else
-                                                    <i class="ti ti-square-x text-danger"></i>
-                                                @endif
+                                                <a href="#" class="toggle-lock"
+                                                    data-id="{{ Crypt::encrypt($d->id) }}">
+                                                    @if ($d->lock == 1)
+                                                        <i class="ti ti-checks text-success icon-lock"></i>
+                                                    @else
+                                                        <i class="ti ti-square-x text-danger icon-lock"></i>
+                                                    @endif
+                                                </a>
+                                            </td>
                                             <td>
                                                 <div class="d-flex">
                                                     <div>
@@ -133,6 +137,31 @@
             e.preventDefault();
             $('#mdleditUser').modal("show");
             $("#loadeditUser").load('/users/' + id + '/edit');
+        });
+    });
+    $(".toggle-lock").click(function(e) {
+        e.preventDefault();
+        let el = $(this);
+        let id = el.data("id");
+
+        $.ajax({
+            url: `/users/${id}/toggle-lock`,
+            type: "POST",
+            data: {
+                _token: "{{ csrf_token() }}"
+            },
+            success: function(res) {
+                if (res.success) {
+                    let icon = el.find('.icon-lock');
+                    if (res.lock == 1) {
+                        icon.removeClass("ti-square-x text-danger").addClass(
+                            "ti-checks text-success");
+                    } else {
+                        icon.removeClass("ti-checks text-success").addClass(
+                            "ti-square-x text-danger");
+                    }
+                }
+            }
         });
     });
 </script>

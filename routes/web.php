@@ -108,6 +108,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/users/{id}/edit', 'edit')->name('users.edit');
         Route::put('/users/{id}/update', 'update')->name('users.update');
         Route::delete('/users/{id}/delete', 'destroy')->name('users.delete');
+        Route::post('/users/{id}/toggle-lock',  'toggleLock')->name('users.toggle-lock');
     });
 
     Route::controller(UserController::class)->group(function () {

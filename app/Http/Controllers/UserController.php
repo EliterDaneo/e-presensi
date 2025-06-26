@@ -151,4 +151,17 @@ class UserController extends Controller
             return Redirect::back()->with(['error' => $e->getMessage()]);
         }
     }
+
+    public function toggleLock($id)
+    {
+        $id = Crypt::decrypt($id);
+        $user = User::findOrFail($id);
+        $user->lock = $user->lock == 1 ? 0 : 1;
+        $user->save();
+
+        return response()->json([
+            'success' => true,
+            'lock' => $user->lock
+        ]);
+    }
 }
