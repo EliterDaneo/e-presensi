@@ -64,7 +64,7 @@ class LaporanController extends Controller
             $periode_dari = $request->tahun . '-' . $bulan . '-01';
             $periode_sampai = date('Y-m-t', strtotime($periode_dari));
         }
-        
+
         $presensi_detail  = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
             ->leftJoin('presensi_izinabsen_approve', 'presensi.id', '=', 'presensi_izinabsen_approve.id_presensi')
             ->leftJoin('presensi_izinabsen', 'presensi_izinabsen_approve.kode_izin', '=', 'presensi_izinabsen.kode_izin')
@@ -274,6 +274,21 @@ class LaporanController extends Controller
                 }
 
                 foreach ($rows as $row) {
+                    $bonus_masuk = 0;
+                    $bonus_pulang = 0;
+
+                    if (!empty($row->jam_in) && !empty($row->jam_masuk)) {
+                        if (strtotime($row->jam_in) <= strtotime($row->jam_masuk)) {
+                            $bonus_masuk = 15000;
+                        }
+                    }
+
+                    if (!empty($row->jam_out) && !empty($row->jam_pulang)) {
+                        if (strtotime($row->jam_out) >= strtotime($row->jam_pulang)) {
+                            $bonus_pulang = 10000;
+                        }
+                    }
+
                     $data[$row->tanggal] = [
                         'status' => $row->status,
                         'kode_jam_kerja' => $row->kode_jam_kerja,
@@ -289,7 +304,10 @@ class LaporanController extends Controller
                         'keterangan_izin_absen' => $row->keterangan_izin_absen,
                         'keterangan_izin_sakit' => $row->keterangan_izin_sakit,
                         'keterangan_izin_cuti' => $row->keterangan_izin_cuti,
-                        'total_jam' => $row->total_jam
+                        'total_jam' => $row->total_jam,
+                        'bonus_masuk' => $bonus_masuk,
+                        'bonus_pulang' => $bonus_pulang,
+                        'total_bonus_harian' => $bonus_masuk + $bonus_pulang
                     ];
                 }
                 return $data;
