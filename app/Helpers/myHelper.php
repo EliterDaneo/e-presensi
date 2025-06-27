@@ -318,8 +318,6 @@ function getSid($file)
 
 function hitungpulangcepat($tanggal_presensi, $jam_out, $jam_pulang, $istirahat, $jam_awal_istirahat, $jam_akhir_istirahat, $lintashari)
 {
-
-
     $tanggal = $lintashari == 1 ? date('Y-m-d', strtotime($tanggal_presensi . ' +1 day')) : $tanggal_presensi;
     $jam_awal_istirahat = $tanggal . ' ' . $jam_awal_istirahat;
     $jam_akhir_istirahat = $tanggal . ' ' . $jam_akhir_istirahat;
@@ -359,7 +357,6 @@ function hitungpulangcepat($tanggal_presensi, $jam_out, $jam_pulang, $istirahat,
 }
 function hitungjamterlambat($jam_in, $jam_mulai)
 {
-
     // $jam_in = date('Y-m-d H:i', strtotime($jam_in));
     // $jam_mulai = date('Y-m-d H:i', strtotime($jam_mulai));
     if (!empty($jam_in)) {
