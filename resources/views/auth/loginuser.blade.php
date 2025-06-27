@@ -44,8 +44,8 @@
                     <form id="formAuthentication" class="mb-3" action="{{ route('login') }}" method="POST">
                         @csrf
                         <div class="logo">
-                            <img src="{{ asset('assets/login/images/logoweb-1.png') }}" alt="easyclass" />
-                            <h4>E-PRESENSI V2</h4>
+                            <img src="{{ asset('assets/login/images/logo.webp') }}" alt="easyclass" />
+                            <h4>E-PRESENSI SMK MUTU</h4>
                         </div>
 
                         <div class="heading">
@@ -68,32 +68,38 @@
 
                         <div class="actual-form">
                             <div class="input-wrap">
-                                <input type="text" minlength="4" class="input-field @error('id_user') is-invalid @enderror" name="id_user"
-                                    value="{{ old('id_user') }}" autocomplete="off" placeholder="Username / Email" required />
+                                <input type="text" minlength="4"
+                                    class="input-field @error('id_user') is-invalid @enderror" name="id_user"
+                                    value="{{ old('id_user') }}" autocomplete="off" placeholder="Username / Email"
+                                    required />
                                 {{-- @error('id_user')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror --}}
                             </div>
 
                             <div class="input-wrap">
-                                <input type="password" minlength="4" name="password" class="input-field @error('password') is-invalid @enderror"
-                                    autocomplete="off" placeholder="Password" required />
+                                <input type="password" minlength="4" name="password"
+                                    class="input-field @error('password') is-invalid @enderror" autocomplete="off"
+                                    placeholder="Password" required />
                                 {{-- @error('password')
                                     <span class="invalid-feedback">{{ $message }}</span>
                                 @enderror --}}
                             </div>
 
                             <div class="checkbox-wrap">
-                                <input type="checkbox" id="remember" name="remember" style="margin-right: 8px; width: 16px; height: 16px;">
-                                <label for="remember" style="color: #666; font-size: 14px; cursor: pointer; margin-left: 20px;">Remember Me</label>
+                                <input type="checkbox" id="remember" name="remember"
+                                    style="margin-right: 8px; width: 16px; height: 16px;">
+                                <label for="remember"
+                                    style="color: #666; font-size: 14px; cursor: pointer; margin-left: 20px;">Remember
+                                    Me</label>
                             </div>
 
                             <input type="submit" value="Sign In" class="sign-btn" />
 
-                            <p class="text">
+                            {{-- <p class="text">
                                 Forgotten your password or you login datails?
                                 <a href="#">Get help</a> signing in
-                            </p>
+                            </p> --}}
                         </div>
                     </form>
 
@@ -101,9 +107,12 @@
 
                 <div class="carousel">
                     <div class="images-wrapper">
-                        <img src="./img/image1.png" class="image img-1 show" alt="" />
-                        <img src="./img/image2.png" class="image img-2" alt="" />
-                        <img src="./img/image3.png" class="image img-3" alt="" />
+                        {{-- <img src="{{ asset('assets/img/favicon/favicon.ico') }}" class="image img-1 show" alt=""
+                            width="10" />
+                        <img src="{{ asset('assets/img/favicon/favicon.ico') }}" class="image img-2" alt=""
+                            width="10" />
+                        <img src="{{ asset('assets/img/favicon/favicon.ico') }}" class="image img-3" alt=""
+                            width="10" /> --}}
                     </div>
 
                     <div class="text-slider">
@@ -127,7 +136,7 @@
     </main>
 
     <!-- Javascript file -->
-    <script src="{{ asset('assets/login/script/app.js') }}"></script>
+    <script src="{{ asset('assets/login/scripts/app.js') }}"></script>
 </body>
 
 </html>
