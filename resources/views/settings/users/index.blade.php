@@ -112,7 +112,7 @@
                             </table>
                         </div>
                         <div style="float: right;">
-                            {{-- {{ $users->links() }} --}}
+                            {{ $users->links() }}
                         </div>
                     </div>
                 </div>

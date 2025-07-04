@@ -24,7 +24,7 @@ class UserController extends Controller
                 });
             })
             ->leftjoin('users_karyawan', 'users.id', '=', 'users_karyawan.id_user')
-            ->get();
+            ->paginate(10);
 
         $roles = Role::orderBy('name')->get();
         return view('settings.users.index', compact('users', 'roles'));
