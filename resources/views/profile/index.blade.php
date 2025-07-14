@@ -60,27 +60,33 @@
                                 </div>
                             @else
                                 <div style="width: 100px; height: 100px; display: block; margin: auto;">
-                                    <img src="{{ asset('assets/img/avatars/No_Image_Available.jpg') }}" alt="" class="rounded-circle w-100">
+                                    <img src="{{ asset('assets/img/avatars/No_Image_Available.jpg') }}" alt=""
+                                        class="rounded-circle w-100">
                                 </div>
                             @endif
                         @else
                             <div style="width: 100px; height: 100px; display: block; margin: auto;">
-                                <img src="{{ asset('assets/img/avatars/No_Image_Available.jpg') }}" alt="" class="rounded-circle w-100">
+                                <img src="{{ asset('assets/img/avatars/No_Image_Available.jpg') }}" alt=""
+                                    class="rounded-circle w-100">
                             </div>
                         @endif
                     </div>
 
                     <input type="text" class="feedback-input" name="nama_karyawan" placeholder="Nama Lengkap"
                         value="{{ $karyawan->nama_karyawan ?? '' }}" required>
-                    <input type="text" class="feedback-input" name="no_ktp" placeholder="No. KTP" value="{{ $karyawan->no_ktp ?? '' }}" required>
-                    <input type="text" class="feedback-input" name="no_hp" placeholder="No. HP" value="{{ $karyawan->no_hp ?? '' }}" required>
+                    <input type="text" class="feedback-input" name="no_ktp" placeholder="No. KTP"
+                        value="{{ $karyawan->no_ktp ?? '' }}" required>
+                    <input type="text" class="feedback-input" name="no_hp" placeholder="No. HP"
+                        value="{{ $karyawan->no_hp ?? '' }}" required>
                     <textarea class="feedback-input" name="alamat" placeholder="Alamat" style="height: 100px" required>{{ $karyawan->alamat ?? '' }}</textarea>
-                    <input type="username" class="feedback-input" name="username" placeholder="Username" value="{{ $user->username }}" required>
-                    <input type="email" class="feedback-input" name="email" placeholder="Email" value="{{ $user->email }}" required>
+                    <input type="username" class="feedback-input" name="username" placeholder="Username"
+                        value="{{ $user->username }}" required>
+                    <input type="email" class="feedback-input" name="email" placeholder="Email"
+                        value="{{ $user->email }}" required>
 
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <input type="file" class="feedback-input" id="foto" name="foto" accept=".jpg, .jpeg, .png">
-                    </div>
+                    </div> --}}
                     <button class="btn btn-primary w-100" id="btnSimpan"><i class="ti ti-send me-1"></i>Update</button>
                 </form>
             </div>
