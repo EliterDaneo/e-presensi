@@ -7,7 +7,6 @@ use App\Models\Izincuti;
 use App\Models\Izinsakit;
 use App\Models\User;
 use App\Models\Userkaryawan;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class PengajuanizinController extends Controller
