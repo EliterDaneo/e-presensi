@@ -14,7 +14,10 @@ use App\Models\Jenistunjangan;
 use App\Models\Karyawan;
 use App\Models\Pengaturanumum;
 use App\Models\Presensi;
+use App\Models\User;
+use App\Models\Userkaryawan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class LaporanController extends Controller
@@ -33,12 +36,13 @@ class LaporanController extends Controller
 
     public function cetakpresensi(Request $request)
     {
+
+        $user = User::where('id', Auth::user()->id)->first();
+        $userkaryawan = Userkaryawan::where('id_user', $user->id)->first();
         $generalsetting = Pengaturanumum::where('id', 1)->first();
         $periode_laporan_dari = $generalsetting->periode_laporan_dari;
         $periode_laporan_sampai = $generalsetting->periode_laporan_sampai;
         $periode_laporan_lintas_bulan = $generalsetting->periode_laporan_next_bulan;
-
-
         if ($request->periode_laporan == 1) {
             if ($periode_laporan_lintas_bulan == 1) {
                 if ($request->bulan == 1) {
@@ -54,6 +58,7 @@ class LaporanController extends Controller
             }
 
             // Menambahkan nol di depan bulan jika bulan kurang dari 10
+
             $bulan = str_pad($bulan, 2, '0', STR_PAD_LEFT);
             $periode_dari = $tahun . '-' . $bulan . '-' . $periode_laporan_dari;
             $periode_sampai = $request->tahun . '-' . $request->bulan . '-' . $periode_laporan_sampai;
@@ -64,6 +69,9 @@ class LaporanController extends Controller
             $periode_dari = $request->tahun . '-' . $bulan . '-01';
             $periode_sampai = date('Y-m-t', strtotime($periode_dari));
         }
+
+
+
 
         $presensi_detail  = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
             ->leftJoin('presensi_izinabsen_approve', 'presensi.id', '=', 'presensi_izinabsen_approve.id_presensi')
@@ -223,6 +231,10 @@ class LaporanController extends Controller
         if (!empty($request->nik)) {
             $q_presensi->where('karyawan.nik', $request->nik);
         }
+
+        if ($user->hasRole('karyawan')) {
+            $q_presensi->where('karyawan.nik', $userkaryawan->nik);
+        }
         $q_presensi->orderBy('karyawan.nama_karyawan');
         $q_presensi->orderBy('presensi.tanggal', 'asc');
         $presensi = $q_presensi->get();
@@ -233,6 +245,7 @@ class LaporanController extends Controller
         $data['jmlhari'] = hitungJumlahHari($periode_dari, $periode_sampai) + 1;
         $data['denda_list'] = Denda::all()->toArray();
         $data['datalibur'] = getdatalibur($periode_dari, $periode_sampai);
+        // $data['datalembur'] = getlembur($periode_dari, $periode_sampai);
         $data['generalsetting'] = $generalsetting;
 
         if (isset($_POST['exportButton'])) {
@@ -240,7 +253,7 @@ class LaporanController extends Controller
             // Mendefinisikan nama file ekspor "-SahabatEkspor.xls"
             header("Content-Disposition: attachment; filename=Rekap Presensi $periode_dari - $periode_sampai.xls");
         }
-        if (!empty($request->nik)) {
+        if (!empty($request->nik) && $request->format_laporan == 1) {
             $karyawan = Karyawan::join('jabatan', 'karyawan.kode_jabatan', '=', 'jabatan.kode_jabatan')
                 ->join('departemen', 'karyawan.kode_dept', '=', 'departemen.kode_dept')
                 ->join('cabang', 'karyawan.kode_cabang', '=', 'cabang.kode_cabang')
@@ -277,14 +290,17 @@ class LaporanController extends Controller
                     $bonus_masuk = 0;
                     $bonus_pulang = 0;
 
+                    $jamMasukFull = $row->tanggal . ' ' . $row->jam_masuk;
+                    $jamPulangFull = $row->tanggal . ' ' . $row->jam_pulang;
+
                     if (!empty($row->jam_in) && !empty($row->jam_masuk)) {
-                        if (strtotime($row->jam_in) <= strtotime($row->jam_masuk)) {
+                        if (strtotime($row->jam_in) <= strtotime($jamMasukFull)) {
                             $bonus_masuk = 15000;
                         }
                     }
 
                     if (!empty($row->jam_out) && !empty($row->jam_pulang)) {
-                        if (strtotime($row->jam_out) >= strtotime($row->jam_pulang)) {
+                        if (strtotime($row->jam_out) >= strtotime($jamPulangFull)) {
                             $bonus_pulang = 10000;
                         }
                     }
@@ -314,10 +330,19 @@ class LaporanController extends Controller
             });
             $data['laporan_presensi'] = $laporan_presensi;
             $data['jenis_tunjangan'] = $jenis_tunjangan;
-            if ($request->format_laporan == 1) {
-                return view('laporan.presensi_cetak', $data);
-            } else if ($request->format_laporan == 2) {
-                return view('laporan.gaji_cetak', $data);
+
+
+            if ($user->hasRole('karyawan')) {
+                //dd($data);
+                return view('laporan.slip_karyawan_cetak', $data);
+            } else {
+                if ($request->format_laporan == 1) {
+                    return view('laporan.presensi_cetak', $data);
+                } else if ($request->format_laporan == 2) {
+                    return view('laporan.gaji_cetak', $data);
+                } else if ($request->format_laporan == 3) {
+                    return view('laporan.slip_cetak', $data);
+                }
             }
         }
     }
