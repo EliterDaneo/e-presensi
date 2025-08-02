@@ -359,31 +359,52 @@ class PresensiController extends Controller
         }
     }
 
-
     function sendwa($no_hp, $message)
     {
         $generalsetting = Pengaturanumum::where('id', 1)->first();
-        $url = $generalsetting->domain_wa_gateway . "/send-message"; // Ganti dengan URL gateway Anda
-        $apiKey = $generalsetting->wa_api_key; // Ganti dengan API key Anda
 
-        $data = [
-            "to" => $no_hp, // Nomor tujuan (bisa 08xxx atau 62xxx)
-            "text" => $message
+        if (!$generalsetting || !$generalsetting->wa_api_key) {
+            return redirect()->back()->with('error', 'Gagal mengirim WA: API Key Fonnte tidak ditemukan.');
+        }
+
+        $token = $generalsetting->wa_api_key;
+        $url = $generalsetting->domain_wa_gateway . '/send';
+
+        $payload = [
+            'target' => $no_hp,
+            'message' => $message,
+            'countryCode' => '62', // pastikan tanpa tanda + dan tanpa 0 di depan nomor
         ];
 
-        $ch = curl_init($url);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_HTTPHEADER, [
-            "Content-Type: application/json",
-            "x-api-key: $apiKey"
+        $headers = [
+            'Authorization: ' . $token
+        ];
+
+        $curl = curl_init();
+
+        curl_setopt_array($curl, [
+            CURLOPT_URL => $url,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_POST => true,
+            CURLOPT_POSTFIELDS => $payload,
+            CURLOPT_HTTPHEADER => $headers,
+            CURLOPT_TIMEOUT => 30,
         ]);
 
-        $response = curl_exec($ch);
-        $httpcode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-        curl_close($ch);
+        $response = curl_exec($curl);
+        $httpCode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
+
+        if (curl_errno($curl)) {
+            return redirect()->back()->with('error', 'Curl Error Fonnte WA: ' . curl_error($curl));
+        } elseif ($httpCode != 200) {
+            return redirect()->back()->with('error', 'Gagal kirim WA via Fonnte. Status code: ' . $httpCode . ', Response: ' . $response);
+        } else {
+            return redirect()->back()->with('error', 'WA berhasil dikirim ke ' . $no_hp);
+        }
+
+        curl_close($curl);
     }
+
     public function edit(Request $request)
     {
         $nik = Crypt::decrypt($request->nik);
