@@ -164,4 +164,48 @@ class PresensiController extends Controller
 
         return response()->json(['status' => 'OK']);
     }
+
+    public function getPresensi(Request $request)
+    {
+        $startDate = $request->start_date ?? date('Y-m-d');
+        $endDate   = $request->end_date ?? date('Y-m-d');
+
+        $presensi = Presensi::join('presensi_jamkerja', 'presensi.kode_jam_kerja', '=', 'presensi_jamkerja.kode_jam_kerja')
+            ->join('karyawan', 'presensi.nik', '=', 'karyawan.nik') // join karyawan untuk ambil nama
+            ->select(
+                'presensi.id',
+                'presensi.nik',
+                'karyawan.nama_karyawan', // tambahkan nama karyawan
+                'presensi.tanggal',
+                'presensi.kode_jam_kerja',
+                'nama_jam_kerja',
+                'jam_masuk',
+                'jam_pulang',
+                'istirahat',
+                'jam_awal_istirahat',
+                'jam_akhir_istirahat',
+                'jam_in',
+                'foto_in',
+                'jam_out',
+                'foto_out',
+                'status',
+                'lintashari',
+                'total_jam',
+                'istirahat_in',
+                'lokasi_istirahat_in',
+                'foto_istirahat_in',
+                'istirahat_out',
+                'lokasi_istirahat_out',
+                'foto_istirahat_out',
+                'lokasi_in',
+                'lokasi_out'
+            )
+            ->whereBetween('presensi.tanggal', [$startDate, $endDate])
+            ->get();
+
+        return response()->json([
+            'status' => true,
+            'data' => $presensi
+        ]);
+    }
 }

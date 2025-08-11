@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\PresensiController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,3 +21,5 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('/presensi', App\Http\Controllers\Api\PresensiController::class);
 Route::post('/presensi/log', [App\Http\Controllers\Api\PresensiController::class, 'log']);
+
+Route::get('/presensi-get', [PresensiController::class, 'getPresensi']);

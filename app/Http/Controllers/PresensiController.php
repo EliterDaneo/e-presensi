@@ -96,6 +96,7 @@ class PresensiController extends Controller
         $data['denda_list'] = Denda::all()->toArray();
         return view('presensi.index', $data);
     }
+    
     public function create($kode_jam_kerja = null)
     {
 
